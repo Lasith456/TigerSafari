@@ -39,7 +39,7 @@ jobs:
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
     - name: Install Composer Dependencies
-      run: composer install 
+      run: composer install --no-dev --optimize-autoloader 
     - name: Install npm Dependencies
       run: npm install 
     - name: Build npm Dependencies
