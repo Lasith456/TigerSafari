@@ -7,7 +7,23 @@ on:
     branches: [ "master" ]
 
 jobs:
+  deploy:
+   
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Deploy to FTP Server
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
   laravel-tests:
+    needs: deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -33,19 +49,3 @@ jobs:
 
     - name: Run Database Migrations
       run: php artisan migrate
-
-  deploy:
-    needs: laravel-tests
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    
-    steps:
-    - name: Check out repository
-      uses: actions/checkout@v4
-
-    - name: Deploy to FTP Server
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.0
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
